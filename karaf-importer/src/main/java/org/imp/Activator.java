@@ -13,10 +13,11 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.mypackage;
+package org.imp;
 
 import java.util.Hashtable;
 
+import org.mypackage.TaskInterface;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -25,10 +26,9 @@ public class Activator implements BundleActivator {
 
     public void start(BundleContext context) {
         System.out.println("Starting the bundle");
-        Hashtable<String, String> props = new Hashtable<String, String>();
-        props.put("port", "8080");
-        context.registerService(TaskInterface.class.getName(), new TaskImplementation(), props);
-      
+        ServiceReference<TaskInterface> face =  context.getServiceReference(TaskInterface.class);
+        TaskInterface ref = context.getService(face);
+        ref.activate();
     }
 
     public void stop(BundleContext context) {
