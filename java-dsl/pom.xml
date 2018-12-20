@@ -21,7 +21,7 @@
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
-            <version>5.0.0</version>
+            <version>6.0.0</version>
             <scope>compile</scope>
         </dependency>
     <dependency>
@@ -84,8 +84,8 @@
                         <Export-Package>
                             org.jdsl*;version=${project.version}
                         </Export-Package>
-                        <Import-Package>
-                           org.osgi.framework;version=1.7,
+                        <Import-Package>Thread thread = 
+                           org.osgi.framework;version=1.7,org.apache.camel*
                         </Import-Package>
                     </instructions>
                 </configuration>

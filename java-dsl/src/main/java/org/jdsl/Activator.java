@@ -25,11 +25,20 @@ public class Activator implements BundleActivator {
 
     public void start(BundleContext context) {
        System.out.println("Activating bundle >>>>>>>>>");
-       try{
-      MainApp.main();
-       }catch(Exception e){
-           e.printStackTrace();
-       }
+       
+    new Thread(new Runnable(){
+    
+        @Override
+        public void run() {
+            try{
+            MainApp.main();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        }
+    }).start();
+     
+      
     }
 
     public void stop(BundleContext context) {
