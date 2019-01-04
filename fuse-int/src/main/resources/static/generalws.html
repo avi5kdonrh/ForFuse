@@ -1,0 +1,64 @@
+<html>
+    <head>
+            <script
+            src="https://code.jquery.com/jquery-3.3.1.js"
+            integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+            crossorigin="anonymous"></script>
+        
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+
+<script>
+            var ws = new WebSocket("ws://127.0.0.1:8082/resourceUri");
+            
+            ws.onopen = function(event){
+                $('#this-div').append("<p>Opening websocket connection...</p>");
+            }
+            ws.onmessage = function(message){
+              console.log(message.data.image);
+              var obj = JSON.parse(message.data);
+              if(obj.image == null){
+                $('#this-div').append("<p class='messages'>Got message >> "+message.data+"</p>");
+              }else{
+                  var image = obj.image;
+                  obj.image = null;
+                $('#this-div').append("<p class='messages'>Got message >> "+JSON.stringify(obj)+"<img src='data:image/png;base64,"+image+"'/></p>");
+
+                
+              }
+            }
+            </script>
+
+<style>
+.messages{
+    background: white;
+    color: #000000;
+    padding: 15px;
+    box-shadow: 2px 2px 12px 0px #beb4b4;
+    overflow-wrap: break-word;
+}
+#this-div{
+    margin: 0 auto;
+    width: 75%;
+}
+
+p{
+    text-align: center;
+}
+
+img{
+    width: 85px;
+}
+</style>
+</head>
+    <body class="jumbotron">
+        <div id="this-div">
+
+        </div>
+    </body>
+</html>
