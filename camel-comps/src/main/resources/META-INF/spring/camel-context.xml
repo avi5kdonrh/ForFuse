@@ -2,67 +2,56 @@
 <!--
   A typical spring based camel routes xml configuration file  
 -->
-<beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
     <camelContext id="_camelContext1" xmlns="http://camel.apache.org/schema/spring">
         <route id="aggregate" startupOrder="2">
-			<from id="_from1" uri="file:/home/adongre/Desktop/Shell/Xamel/input?delay=2000" />
-			<aggregate id="_aggregate1"
-				strategyRef="aggregationStrategyImpl" eagerCheckCompletion="true">
-				<correlationExpression>
-					<constant>true</constant>
-				</correlationExpression>
-				<completionSize><constant>3</constant></completionSize>
-				<log id="_log1"
-				message=">>>>>>>>>>>>>>>>>>>>> The message contains ${body}" />
-			<to id="_to1" uri="remoteActivemq:bulkQueue" />
-			</aggregate>
-		</route>
-		
+            <from id="_from1" uri="file:/home/adongre/Desktop/Shell/Xamel/input?delay=2000" />
+            <aggregate id="_aggregate1" strategyRef="aggregationStrategyImpl" eagerCheckCompletion="true">
+                <correlationExpression>
+                    <constant>true</constant>
+                </correlationExpression>
+                <completionSize>
+                    <constant>3</constant>
+                </completionSize>
+                <log id="_log1" message=">>>>>>>>>>>>>>>>>>>>> The message contains ${body}" />
+                <to id="_to1" uri="remoteActivemq:bulkQueue" />
+            </aggregate>
+        </route>
         <route startupOrder="1">
             <from id="time" uri="timer://newTimer?period=4000" />
             <log message="Timer Running >>>> "></log>
             <process ref="fileGenerator"></process>
-            <to id="to-start" uri="file:/home/adongre/Desktop/Shell/Xamel/input/"/>
+            <to id="to-start" uri="file:/home/adongre/Desktop/Shell/Xamel/input/" />
         </route>
-		
-		<route id="split" startupOrder="3">
-		<from id="consumer1" uri="timer://timerName?period=8000"/>
-        <pollEnrich>
-            <constant>remoteActivemq:bulkQueue</constant>
-        </pollEnrich>
-        <log message="Polled Message >>> ${body}"/>
+        <route id="split" startupOrder="3">
+            <from id="consumer1" uri="timer://timerName?period=8000" />
+            <pollEnrich>
+                <constant>remoteActivemq:bulkQueue</constant>
+            </pollEnrich>
+            <log message="Polled Message >>> ${body}" />
             <split id="splitt">
-                    <tokenize token=" "/>
-                    <setHeader headerName="CamelHttpMethod">
-  <constant>GET</constant>
-</setHeader>
-                    <enrich strategyRef="enrichAggregationStrategyImpl">
-                         
-                        <constant>jetty:http://localhost:8080</constant>
-                        </enrich>
-                        <log message="Token to http >> ${body}"></log>
-                       <setHeader headerName="CamelHttpMethod">
-  <constant>GET</constant>
-</setHeader>
-                       <to uri="remoteActivemq:certainQueue"/> 
+                <tokenize token=" " />
+                <setHeader headerName="CamelHttpMethod">
+                    <constant>GET</constant>
+                </setHeader>
+                <enrich strategyRef="enrichAggregationStrategyImpl">
+                    <constant>jetty:http://localhost:8080</constant>
+                </enrich>
+                <log message="Token to http >> ${body}"></log>
+                <setHeader headerName="CamelHttpMethod">
+                    <constant>GET</constant>
+                </setHeader>
+                <to uri="remoteActivemq:certainQueue" />
             </split>
-		</route>
-		
+        </route>
     </camelContext>
-    <bean class="com.split.AggregationStrategyImpl"
-		id="aggregationStrategyImpl" />
-
-        <bean class="com.split.EnrichAggregationStrategyImpl"
-		id="enrichAggregationStrategyImpl" />
-	
-	
-    <bean class="com.split.FileGenerator" id = "fileGenerator"/>
-		
+    <bean class="com.split.AggregationStrategyImpl" id="aggregationStrategyImpl" />
+    <bean class="com.split.EnrichAggregationStrategyImpl" id="enrichAggregationStrategyImpl" />
+    <bean class="com.split.FileGenerator" id="fileGenerator" />
     <bean id="remoteActivemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
-       <!--  <property name="trustAllPackages" value="true"/> -->
-        <property name="brokerURL" value="tcp://localhost:61616"/>
-        <property name="userName" value="admin"/>
-        <property name="password" value="admin"/>
+        <!--  <property name="trustAllPackages" value="true"/> -->
+        <property name="brokerURL" value="tcp://localhost:61616" />
+        <property name="userName" value="admin" />
+        <property name="password" value="admin" />
     </bean>
 </beans>
