@@ -1,0 +1,109 @@
+<html>
+    <head>
+            <script
+            src="https://code.jquery.com/jquery-3.3.1.js"
+            integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+            crossorigin="anonymous"></script>
+        
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+
+
+
+<style>
+.messages{
+    background: white;
+    color: #000000;
+    padding: 15px;
+    box-shadow: 2px 2px 12px 0px #beb4b4;
+    overflow-wrap: break-word;
+}
+#this-div{
+    margin: 0 auto;
+    width: 75%;
+}
+
+p{
+    text-align: center;
+}
+
+img{
+    width: 85px;
+}
+</style>
+</head>
+    <body class="jumbotron">
+        <div id="this-div">
+            <form action="/submit" method="POST" enctype="multipart/form-data">
+            <input type="text" class="form-control" placeholder="name" name="name" id="name" value="Abc">
+            <input type="number" class="form-control" placeholder="age" name="age" id="age" value="27">
+            <input type="text" class="form-control" placeholder="location" name="location" id="location" value="fwefewfwef">
+            <input type="text" class="form-control" placeholder="DOB" name="dob" id="dob" value="02-Jan-1992">
+            <input type="file" class="form-control" placeholder="image" name="file" id="file">
+            <input type="button" value="Submit" id="submit">
+            </form>
+        </div>
+       
+    </body>
+    <script>
+            $('#submit').click(function(){
+        var name = $('#name').val();
+        var age = $('#age').val();
+        var location = $('#location').val();
+        var dob = $('#dob').val();
+      
+        var json = {};
+        json.name = name;
+        json.age = age;
+        json.location = location;
+        json.dob = dob;
+        if($('#file')[0].files.length>0){
+        var file = $('#file')[0].files[0];
+        var readerObject = new FileReader();
+        readerObject.readAsDataURL(file);
+        var base64 = readerObject.result;
+        readerObject.onloadend = function(){
+            base64 = this.result;
+        json.image = base64;
+        $.ajax({
+        url:"/submit",
+        method:"POST",
+        dataType:"json",
+        data:JSON.stringify(json),
+        contentType:"application/json; charset=utf-8",
+        success: function(data){
+            console.log("from server: "+data);
+        },
+        error: function(err){
+            console.log("Error from server "+err.error);
+        }
+    });   
+        }
+        
+      
+        
+        }else{
+            $.ajax({
+        url:"/submit",
+        method:"POST",
+        data:JSON.stringify(json),
+        contentType:"application/json",
+        success: function(data){
+            console.log("from server: "+data);
+        },
+        error: function(err){
+            console.log("Error from server "+err.error);
+        }
+    });   
+        }
+        
+ 
+    
+    });
+                    </script>
+</html>
