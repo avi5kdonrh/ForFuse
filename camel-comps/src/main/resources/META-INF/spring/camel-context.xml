@@ -4,6 +4,8 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
     <camelContext id="_camelContext1" xmlns="http://camel.apache.org/schema/spring">
+      
+      <!-- This route accumulates 3 files and aggregates the result into a remote JMS queue -->
         <route id="aggregate" startupOrder="2">
             <from id="_from1" uri="file:/home/adongre/Desktop/Shell/Xamel/input?delay=2000" />
             <aggregate id="_aggregate1" strategyRef="aggregationStrategyImpl" eagerCheckCompletion="true">
@@ -17,12 +19,19 @@
                 <to id="_to1" uri="remoteActivemq:bulkQueue" />
             </aggregate>
         </route>
+      
+      <!-- This route creates a new file on the given path periodically -->
         <route startupOrder="1">
             <from id="time" uri="timer://newTimer?period=4000" />
             <log message="Timer Running >>>> "></log>
             <process ref="fileGenerator"></process>
             <to id="to-start" uri="file:/home/adongre/Desktop/Shell/Xamel/input/" />
         </route>
+
+        <!-- This routes polls from a remote JMS queue and splits the body based on a token.
+            These split routes get enriched with the configured strategy. This enriched exchange goes to
+            a remote JMS queue
+         -->
         <route id="split" startupOrder="3">
             <from id="consumer1" uri="timer://timerName?period=8000" />
             <pollEnrich>
