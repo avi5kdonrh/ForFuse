@@ -1,0 +1,11 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - RunApp",
+            "request": "launch",
+            "mainClass": "RunApp",
+            "projectName": "camel-spring"
+        }
+    ]
+}
