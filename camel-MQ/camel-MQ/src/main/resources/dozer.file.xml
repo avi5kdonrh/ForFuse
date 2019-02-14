@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings xmlns="http://dozermapper.github.io/schema/bean-mapping"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://dozermapper.github.io/schema/bean-mapping https://dozermapper.github.io/schema/bean-mapping.xsd">
+
+	<mapping>
+		<class-a>alis_esb.SendMessageRequest</class-a>
+		<class-b>com.lmco.spms.services.spmsmessages.ErrMessage</class-b>
+		
+	</mapping>
+
+</mappings> 

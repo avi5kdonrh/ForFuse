@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:cxf="http://camel.apache.org/schema/cxf"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+    ">
+
+    
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <route> <!-- route starts from the cxf webservice -->
+      <from uri="timer:timer?period=3000" />
+      <to uri="cxf:http://localhost:8182/service?wsdlURL=localhost:8182/service?wsdl&amp;ser" /> <!-- and then create the OK reply for the webservice which is still waiting for a reply -->
+      <transform>
+        <constant>OK</constant>
+      </transform>
+    </route> <!-- test route -->
+    <route>
+      <from uri="seda:incomingOrders" />
+      <to uri="mock:end" />
+    </route>
+  </camelContext>
+
+    </beans>

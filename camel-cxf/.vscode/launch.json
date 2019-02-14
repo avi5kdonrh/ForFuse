@@ -1,0 +1,18 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - TestRoute",
+            "request": "launch",
+            "mainClass": "TestRoute",
+            "projectName": "ccxf"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - Test",
+            "request": "launch",
+            "mainClass": "Test",
+            "projectName": "ccxf"
+        }
+    ]
+}
