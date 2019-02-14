@@ -1,0 +1,29 @@
+Manifest-Version: 1.0
+Bnd-LastModified: 1550128709510
+Build-Jdk: 1.8.0_181
+Built-By: adongre
+Bundle-Blueprint: OSGI-INF/blueprint/blueprint.xml
+Bundle-ManifestVersion: 2
+Bundle-Name: Camel Content-Based Router Example [fuse-int]
+Bundle-SymbolicName: fuse-int
+Bundle-Version: 1.0.0
+Created-By: Apache Maven Bundle Plugin
+Export-Package: alis_esb;version="1.0.0";uses:="org.apache.camel,org.apa
+ che.camel.spi",com.rh;version="1.0.0";uses:="org.apache.camel",com.lmco
+ .spms.services.spmsmessages;version="1.0.0";uses:="org.apache.camel"
+Export-Service: javax.sql.XADataSource;osgi.jndi.service.name=jdbc/mysql
+ db;datasource.name=MySQL;aries.xa.pooling=true;aries.xa.poolMinSize=0;a
+ ries.xa.poolMaxSize=5;aries.xa.name=mysqlDS;aries.xa.exceptionSorter=kn
+ own
+Import-Package: com.mysql.cj.jdbc,javax.sql,org.apache.activemq,org.apac
+ he.activemq.pool,org.apache.camel;version="[2.17,3)",org.apache.camel.c
+ omponent.jms;version="[2.17,3)",org.apache.camel.component.sql,org.apac
+ he.camel.spi;version="[2.17,3)",org.apache.camel.spring;version="[2.17,
+ 3)",org.apache.camel.spring.spi;version="[2.17,3)",org.apache.geronimo.
+ transaction.manager,org.osgi.service.blueprint;version="[1.0.0,2.0.0)",
+ org.springframework.transaction
+Import-Service: javax.sql.DataSource;multiple:=false,org.apache.geronimo
+ .transaction.manager.RecoverableTransactionManager;multiple:=false,org.
+ springframework.transaction.PlatformTransactionManager;multiple:=false
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.8))"
+Tool: Bnd-3.2.0.201605172007

@@ -1,0 +1,11 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - StartRoute",
+            "request": "launch",
+            "mainClass": "com.rh.StartRoute",
+            "projectName": "camel-ppro"
+        }
+    ]
+}

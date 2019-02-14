@@ -1,0 +1,121 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+  
+    <camelContext id="seda-example-context" xmlns="http://camel.apache.org/schema/spring">
+        <threadPoolProfile id="tp_1" poolSize="6"/>
+   <route>
+       <from uri="seda:first?multipleConsumers=true&amp;concurrentConsumers=5"></from>
+       <setBody>
+           <constant>
+               The Message Body >>
+           </constant>
+       </setBody>
+       <log message="${body} >> ${threadName}"></log>
+       <to uri="mock:in"/>
+   </route>
+
+   <route>
+       <from uri="timer:timer1?period=2000"/>
+       <setBody>
+           <constant>Constantine</constant>
+       </setBody>
+       <log message="${body}"></log>
+       <to uri="seda:first?multipleConsumers=true"></to>
+   </route>
+    
+
+
+    <route>
+      <from uri="timer:in?delay=3s"/>
+      <log message="Received ${body}:${threadName}"/>
+      <threads executorServiceRef="tp_1">
+        <log message="Processing ${body}:${threadName}"/>
+        <transform>
+          <simple>${threadName}</simple>
+        </transform>
+        <to uri="stream:out"/>
+      </threads>
+    </route>
+
+
+<route>
+   <from uri="jms:queue:successQ?connectionFactory=#pooledConnectionFactory"></from>
+    <loadBalance>        
+        <roundRobin/>
+        <to uri="stream:out"/>        
+     <to uri="jms:queue:lbq1?connectionFactory=#pooledConnectionFactory"/>
+     <to uri="jms:queue:lbq2?connectionFactory=#pooledConnectionFactory"/>            
+    </loadBalance>
+  </route>
+
+
+</camelContext>
+
+<bean id="errorProcessor" class="com.lmco.spms.services.spmsmessages.ErrMessage"></bean>
+
+<bean id="myDeadLetterErrorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
+    <property name="deadLetterUri" value="jms:queue:deadL"/>
+    <property name="redeliveryPolicy" ref="myRedeliveryPolicyConfig"/>
+</bean>
+
+<bean id="myRedeliveryPolicyConfig" class="org.apache.camel.processor.RedeliveryPolicy">
+    <property name="maximumRedeliveries" value="3"/>
+    <property name="redeliveryDelay" value="5000"/>
+</bean>
+
+
+<bean id="headerFilter" class="alis_esb.HeaderStrategy"></bean>
+
+    <bean id="pooledConnectionFactory"
+		  class="org.apache.activemq.jms.pool.PooledConnectionFactory" primary="true">
+		<property name="connectionFactory" ref="activemqConnectionFactory"/>
+		<property name="maxConnections" value="6"/>
+		<property name="maximumActiveSessionPerConnection" value="10"/>
+        <property name="timeBetweenExpirationCheckMillis" value="10"/>
+                  
+	</bean>
+
+<bean id="jmsCachingConnectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
+	  <property name="targetConnectionFactory" ref="activemqConnectionFactory" />
+	   <property name="sessionCacheSize" value="10"/>
+	</bean>	
+
+    <bean id="activemqConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+            <property name="brokerURL" value="tcp://localhost:61616"></property>
+            <property name="userName" value="admin"></property>
+            <property name="password" value="admin"></property>
+    </bean>
+
+
+    <bean id="jmsConfig" class="org.apache.camel.component.jms.JmsConfiguration">
+    <property name="connectionFactory" ref="pooledConnectionFactory"/>
+    <property name="transacted" value="false"/>
+    <property name="concurrentConsumers" value="5"/>
+    <property name="maxConcurrentConsumers" value="10"/>
+</bean>
+
+  <bean id="jmsConfig1" class="org.apache.camel.component.jms.JmsConfiguration">
+    <property name="connectionFactory" ref="jmsCachingConnectionFactory"/>
+    <property name="transacted" value="false"/>
+    <property name="concurrentConsumers" value="5"/>
+    <property name="maxConcurrentConsumers" value="10"/>
+</bean>
+
+<bean id="activemq" class="org.apache.camel.component.jms.JmsComponent">
+    <property name="configuration" ref="jmsConfig"/>
+</bean>
+
+<bean id="activemq1" class="org.apache.camel.component.jms.JmsComponent">
+    <property name="configuration" ref="jmsConfig1"/>
+</bean>
+
+
+<bean id="dataSource"
+    class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+    <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+    <property name="url" value="jdbc:mysql://localhost:3306/data" />
+    <property name="username" value="root" />
+    <property name="password" value="rootAwesome1$" />
+</bean>
+
+</beans>
